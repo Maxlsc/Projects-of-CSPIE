@@ -1,4 +1,5 @@
 import random
+import time
 from gmssl import sm3, func
 
 def getRandom(randomlength=16):
@@ -27,4 +28,14 @@ def birthday_attack(n):
             return 1
     return 0
 
-birthday_attack(32)
+n = 24
+
+start_time = time.perf_counter()
+birthday_attack(n)
+end_time = time.perf_counter()
+execution_time = (end_time - start_time) * 1000
+print("执行时间为：", execution_time, "毫秒")
+
+check = 0
+while check == 0:
+    check = birthday_attack(n)
