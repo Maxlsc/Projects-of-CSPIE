@@ -67,11 +67,10 @@ str1 = 'secret'
 str2 = 'padding'
 msg1 = func.bytes_to_list(str1.encode())
 msg2 = func.bytes_to_list(str2.encode())
-msg3 = func.bytes_to_list(str1.encode())
 
 IV = get_iv(sm3.sm3_hash(msg1))
 
-msg4 = msg1+msg2
+msg3 = msg1+msg2
 
 print(sm3_hash_0(len(msg1),msg2))
-print(sm3.sm3_hash(msg4))
+print(sm3.sm3_hash(msg3))
