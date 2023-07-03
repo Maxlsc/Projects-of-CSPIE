@@ -2,6 +2,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ratio>
+#include <chrono>
+#include <time.h>
+#include <intrin.h>
+#include <iostream>
+using namespace std;
 
 #define FF0(x,y,z) x^y^z
 #define FF1(x,y,z) (x&y)|(x&z)|(y&z)
@@ -19,10 +25,10 @@ static uint32_t rot(uint32_t a, uint8_t n)
 
 static const uint32_t IV[8] =
 {
-	0x7380166F,	0x4914B2B9,
-	0x172442D7,	0xDA8A0600,
-	0xA96F30BC,	0x163138AA,
-	0xE38DEE4D,	0xB0FB0E4E,
+    0x7380166F,    0x4914B2B9,
+    0x172442D7,    0xDA8A0600,
+    0xA96F30BC,    0x163138AA,
+    0xE38DEE4D,    0xB0FB0E4E,
 };
 
 static uint32_t T[64];
@@ -38,9 +44,9 @@ static void CF(uint8_t* B,uint32_t* V){
     uint32_t w0[68],w[64];
     for(int i = 0; i < 16; i++){
         w0[i] =  ((uint32_t)B[i * 4 + 0] << 24) & 0xFF000000
-		        |((uint32_t)B[i * 4 + 1] << 16) & 0x00FF0000
-			    |((uint32_t)B[i * 4 + 2] << 8 ) & 0x0000FF00
-			    |((uint32_t)B[i * 4 + 3] << 0 ) & 0x000000FF;
+                |((uint32_t)B[i * 4 + 1] << 16) & 0x00FF0000
+                |((uint32_t)B[i * 4 + 2] << 8 ) & 0x0000FF00
+                |((uint32_t)B[i * 4 + 3] << 0 ) & 0x000000FF;
     }
     for(int i = 16; i < 68; i++) w0[i] = P1(w0[i-16]^w0[i-9]^rot(w0[i-3],15))^rot(w0[i-13],7)^w0[i-6];
     for(int i = 0; i < 64; i++) w[i] = w0[i] ^ w0[i+4];
@@ -94,17 +100,28 @@ void sm3_hash(uint8_t* data, uint32_t data_len, uint8_t* res){
     }
     free(msg);
     for (int i = 0; i < 8; i++){
-		res[i * 4 + 0] = (uint32_t)((V[i] >> 24) & 0xFF);
-		res[i * 4 + 1] = (uint32_t)((V[i] >> 16) & 0xFF);
-		res[i * 4 + 2] = (uint32_t)((V[i] >>  8) & 0xFF);
-		res[i * 4 + 3] = (uint32_t)((V[i] >>  0) & 0xFF);
-	}
+        res[i * 4 + 0] = (uint32_t)((V[i] >> 24) & 0xFF);
+        res[i * 4 + 1] = (uint32_t)((V[i] >> 16) & 0xFF);
+        res[i * 4 + 2] = (uint32_t)((V[i] >>  8) & 0xFF);
+        res[i * 4 + 3] = (uint32_t)((V[i] >>  0) & 0xFF);
+    }
 }
 
 int main(){
-    char* b = "test";
+    char b[] = "test";
     char hash[10086];
-    sm3_hash(b,strlen(b),hash);
-    print(hash,32);
+
+    int n = 1000000;
+    auto begin = std::chrono::high_resolution_clock::now();
+
+    for(int i = 0; i < n; i++)
+    sm3_hash((uint8_t*)b,(uint32_t)strlen(b),(uint8_t*)hash);
+    
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::ratio<1, 1000>> diff = end - begin;
+    // std::cout << HZ*diff.count()/(n*N*N*N) << "\n";
+    std::cout << diff.count()/n << "ms\t";
+
+    print((uint8_t*)hash,32);
     return 0;
 }
