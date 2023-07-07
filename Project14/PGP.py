@@ -16,7 +16,7 @@ def getRandom(randomlength=16):
 class PGP:
     def __init__(self):
         self.sm2C = CryptSM2("0","0")
-        self.d = random.randint(1,0xFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B21C6052B53BBF40939D54123)
+        self.d = random.randint(1,0xFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B21C6052B53BBF40939D54123-1)
         self.publickey = self.sm2C._kg(self.d,'32c4ae2c1f1981195f9904466a39c9948fe30bbff2660be1715a4589334c74c7''bc3736a2f4f6779c59bdcee36b692153d0a9877cc62a474002df32e52139f0a0')
         self.privatekey = hex(self.d)[2:]
         self.sm2C = CryptSM2(self.privatekey,self.publickey)
