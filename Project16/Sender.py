@@ -14,7 +14,6 @@ class sender:
 
     def __init__(self, addr=('localhost', 8080)):
         self.d1 = 0x94b8a9d27b8821945c0ff89bef829a357dec0b70de8377cec7c70bd294887cb4 
-        self.d2 = 0x383c53f785cd1e45da3c07f8473527581a2ee50a5974943691868e73694a4f61
         self.serverSocket = socket.socket()
         self.serverSocket.bind(addr)
         self.serverSocket.listen()
