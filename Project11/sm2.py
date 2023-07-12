@@ -82,7 +82,7 @@ class sm2:
             acc = self.add(acc, P)
         return acc
     
-    def kdf(self, z, klen): # z为16进制表示的比特串（str），klen为密钥长度（单位byte）
+    def kdf(self, z, klen):
         klen = int(klen)
         ct = 1
         rcnt = ceil(klen/32)
