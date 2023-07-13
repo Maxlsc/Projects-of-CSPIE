@@ -10,7 +10,7 @@
 
 为了不引起歧义，下文中我们把用户存储的网站和账户密码称作"口令"。
 
-## Firefox记住密码原理概述（基于onepw的密码存储协议）
+## Firefox记住密码原理概述（基于onepw的密码存储协议）$^{[1]}$
 
 通过阅读Firefox的Github文档，了解到Firefox利用了本地客户端、密码服务器和一个安全密码查询协议和一个密码验证协议来实现整个功能。
 
@@ -91,9 +91,9 @@ Merkel tree示例如图所示：
 
 
 
-## Chrome记住密码原理概述
+## Chrome记住密码原理概述$^{[2]}$
 
-Chrome密码管理器与Firfox不同的是，其将密码和加密过的数据均存储在用户本地，以windows为例，Chrome将使用windows API **CryptProtectData**加密后的口令存储在AppData\Local\Google\Chrome\User Data\Default\ **Login Data**，将密码存储在AppData\Local\Google\Chrome\User Data\ ***Local State***。
+Chrome密码管理器与Firfox不同的是，其将密码和加密过的数据均存储在用户本地，以windows为例，Chrome将使用windows API **CryptProtectData** $^{[3]}$加密后的口令存储在AppData\Local\Google\Chrome\User Data\Default\ **Login Data**，将密码存储在AppData\Local\Google\Chrome\User Data\ ***Local State***。
 
 Chromee的立场是主密码提供了一种虚假的安全感，保护敏感数据的最可行保护方式是要取决于系统的整体安全性。所有，为了执行加密（在Windows操作系统上），Chrome使用了Windows提供的CryptProtectData API，该API允许已经用于加密的Windows用户账户去解密已加密的口令。所以也可以理解为主密码就是Windows账户密码，即只要登录了Windows账号，Chrome就可以解密口令，并导入密码管理器中。
 
@@ -157,27 +157,20 @@ if __name__ == '__main__':
 
 ![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/7.png)
 
+## 两者浏览器记住密码插件的比较
+
+综上所述，可以总结出两者之间的区别：
+
+1. 存储位置：Firefox的密码管理器将密码存储在服务器端，而Chrome的密码管理器将密码和口令加密后的结构都存储在本地。
+2. 数据恢复：对于忘记密码的情况，Firefox提供了找回密码的方式，通过验证电子邮件地址和重置密码来重新获得账户访问权限。而Chrome则没有提供找回密码的功能。
+3. 安全性：Firefox的密码存储协议支持 A 类和 B 类口令，A 类数据可通过验证电子邮件地址和重置密码方式恢复，B 类数据则无法恢复。Chrome的密码存储方案依赖于操作系统的整体安全性，即主密码就是 Windows 账户密码，只要登录了 Windows 账号，Chrome 就可以解密口令，并导入密码管理器中。
+
 **参考资料：**
 
-【1】https://baike.baidu.com/item/%E6%A2%85%E5%85%8B%E5%B0%94%E6%A0%91/22456281?fr=aladdin
+【1】 [onepw protocol · mozilla/fxa-auth-server Wiki (github.com)](https://github.com/mozilla/fxa-auth-server/wiki/onepw-protocol)
 
-【2】https://blog.csdn.net/shangsongwww/article/details/119272573
+【2】[How Secure are Your Saved Chrome Browser Passwords? (howtogeek.com)](https://www.howtogeek.com/70146/how-secure-are-your-saved-chrome-browser-passwords/)
 
-【3】https://zhuanlan.zhihu.com/p/32924994
+【3】[CryptProtectData 函数 (dpapi.h) - Win32 apps | Microsoft Learn](https://learn.microsoft.com/zh-cn/windows/win32/api/dpapi/nf-dpapi-cryptprotectdata)
 
-【4】https://www.jianshu.com/p/5e2483413537?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation
-
-【5】https://sickworm.com/?p=1749
-
-【6】https://www.jianshu.com/p/e67452930dcc?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes
-
-【7】https://copyfuture.com/blogs-details/20211208055551745d
-
-【8】https://www.youtube.com/watch?v=9S8rmW8LD5o&t=3s
-
-【9】Substrate官方文档：https://substrate.dev/
-
-【10】[Google search : Wiki Trie](https://en.wikipedia.org/wiki/Trie)
-
-【11】arity介绍：https://www.parity.io/
 
