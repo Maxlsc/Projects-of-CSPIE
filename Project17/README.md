@@ -10,7 +10,7 @@
 
 为了不引起歧义，下文中我们把用户存储的网站和账户密码称作"口令"。
 
-## Firefox记住密码原理概述（基于onepw的密码存储协议）$^{[1]}$
+## Firefox记住密码原理概述（基于onepw的密码存储协议）<sup>[1]</sup>
 
 通过阅读Firefox的Github文档，了解到Firefox利用了本地客户端、密码服务器和一个安全密码查询协议和一个密码验证协议来实现整个功能。
 
@@ -85,15 +85,10 @@ Merkel tree示例如图所示：
 
 第三，即使攻击者利用盗取的邮箱重置用户密码，也无法访问B类数据，B类数据会丢失。此时A类数据将会被窃取。
 
-### 旧版协议(SRP协议)
 
-有待后续补充
+## Chrome记住密码原理概述<sup>[2]</sup>
 
-
-
-## Chrome记住密码原理概述$^{[2]}$
-
-Chrome密码管理器与Firfox不同的是，其将密码和加密过的数据均存储在用户本地，以windows为例，Chrome将使用windows API **CryptProtectData** $^{[3]}$加密后的口令存储在AppData\Local\Google\Chrome\User Data\Default\ **Login Data**，将密码存储在AppData\Local\Google\Chrome\User Data\ ***Local State***。
+Chrome密码管理器与Firfox不同的是，其将密码和加密过的数据均存储在用户本地，以windows为例，Chrome将使用windows API **CryptProtectData** <sup>[3]</sup>加密后的口令存储在AppData\Local\Google\Chrome\User Data\Default\ **Login Data**，将密码存储在AppData\Local\Google\Chrome\User Data\ ***Local State***。
 
 Chromee的立场是主密码提供了一种虚假的安全感，保护敏感数据的最可行保护方式是要取决于系统的整体安全性。所有，为了执行加密（在Windows操作系统上），Chrome使用了Windows提供的CryptProtectData API，该API允许已经用于加密的Windows用户账户去解密已加密的口令。所以也可以理解为主密码就是Windows账户密码，即只要登录了Windows账号，Chrome就可以解密口令，并导入密码管理器中。
 
