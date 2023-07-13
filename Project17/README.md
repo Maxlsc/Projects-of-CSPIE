@@ -85,12 +85,13 @@ Merkel tree示例如图所示：
 
 第三，即使攻击者利用盗取的邮箱重置用户密码，也无法访问B类数据，B类数据会丢失。此时A类数据将会被窃取。
 
-
 ## Chrome记住密码原理概述<sup>[2]</sup>
 
 Chrome密码管理器与Firfox不同的是，其将密码和加密过的数据均存储在用户本地，以windows为例，Chrome将使用windows API **CryptProtectData** <sup>[3]</sup>加密后的口令存储在AppData\Local\Google\Chrome\User Data\Default\ **Login Data**，将密码存储在AppData\Local\Google\Chrome\User Data\ ***Local State***。
 
 Chromee的立场是主密码提供了一种虚假的安全感，保护敏感数据的最可行保护方式是要取决于系统的整体安全性。所有，为了执行加密（在Windows操作系统上），Chrome使用了Windows提供的CryptProtectData API，该API允许已经用于加密的Windows用户账户去解密已加密的口令。所以也可以理解为主密码就是Windows账户密码，即只要登录了Windows账号，Chrome就可以解密口令，并导入密码管理器中。
+
+通过阅读Chrome浏览器密码管理器源代码<sup>[4]</sup>可以验证这一点
 
 下面尝试编写代码chrom.py来调用CryptProtectData API解密密文，
 
@@ -168,4 +169,4 @@ if __name__ == '__main__':
 
 【3】[CryptProtectData 函数 (dpapi.h) - Win32 apps | Microsoft Learn](https://learn.microsoft.com/zh-cn/windows/win32/api/dpapi/nf-dpapi-cryptprotectdata)
 
-
+【4】[Chrome/password_store_win](https://github.com/scheib/chromium/blob/eb7e2441dd8878f733e43799ea77c2bab66816d3/chrome/browser/password_manager/password_store_win_unittest.cc#L107)
