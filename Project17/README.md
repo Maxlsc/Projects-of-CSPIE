@@ -1,0 +1,124 @@
+# 比较Firefox和谷歌的记住密码插件的实现区别
+
+本md文件即为research-report
+
+## 实验目标及方法
+
+实验目标即标题，比较Firefox和Chrom的记住密码插件的实现区别，包括协议和代码上的区别。
+
+实验方法为阅读Firefox和Chrom对于密码管理器的官方文档，同时寻找插件源码予以验证。
+
+为了不引起歧义，下文中我们把用户存储的网站和账户密码称作"口令"。
+
+## Firefox记住密码原理概述（基于onepw的密码存储协议）
+
+通过阅读Firefox的Github文档，了解到Firefox利用了本地客户端、密码服务器和一个安全密码查询协议和一个密码验证协议来实现整个功能。
+
+简单而言，客户端存储账户信息和密码（该密码不会发送给密码服务器，否则会使服务器得到所存储密钥加密值的明文），客户端利用密码验证协议证明自己为密码持有者，为自己产生会话令牌，服务器会验证该令牌。服务器会将口令分为A类和B类：
+
+- A类：即使用户忘记了密码，也可以通过证明对电子邮件地址的控制权(ID)并重置帐户来恢复分配给此类的口令。A类主密钥存储在服务器上，用于帮助用户找回丢失口令，不同数据类型的单个加密密钥均派生自 kA。
+- B类：如果忘记密码，则无法恢复此类中的数据。即使拥有用户的IdP 无法读取它。密钥服务器只存储 wrap（kB），并且永远不会看到 kB 本身。客户端（浏览器）使用从用户密码派生的密钥（这一步使用了 Key Stretching，得到B类密钥的派生密钥）来解密 wrap（kB），获取真正的 kB。
+
+下面对Firefox插件各步骤的详细分析。
+
+### 创建口令管理帐户并分配密钥
+
+Merkel tree示例如图所示：
+
+![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/1.png)
+
+当用户在客户端输入email和password后，运行100轮派生函数PBKDF2，使用用户的邮件地址作为salt生成quickStretchedPW，然后将其作为HKDF的参数，得到authPW，在此过程中得到了密码强度足够(主要是保证随机性)的派生密钥authPW。最后，将邮件地址和对应的authPW发送给服务器。
+
+服务器得到密钥后，会对该密钥进一步扩展，同时生成哈希表存储索引值便于遍历。
+
+###  口令查询/会话建立
+
+口令查询包括获得会话令牌和创立会话
+
+我们先来谈谈获得会话令牌，主要步骤如下图所示：
+
+![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/2.png)
+
+要将客户端连接到服务器，需要使用登录协议将电子邮件+密码对转换为sessionToken。
+
+该协议首先在客户端将密码和电子邮件地址输入 1000 轮 PBKDF2 以获得quickStretchedPW，将 quickStretchedPW 输入 HKDF 以获得authPW，然后将电子邮件 + authPW 发送到服务器的端点。
+
+服务器使用电子邮件地址查找数据库行，提取authSalt，执行与帐户创建期间相同的拉伸，以获取bigStretchedPW，验证哈希值得到verifyHash，然后将verifyHash与存储的值进行比较。如果它们匹配，则客户端已证明知道密码，服务器将创建一个新会话。服务器将新生成的会话令牌及其帐户标识符 （uid） 返回给客户端。
+
+ 值得注意的是，在本协议中，服务器支持每个帐户同时存在多个会话（通常每个客户端设备一个会话，可能还有其他用于帐户管理门户的会话）。这代表sessionToken 永久存在（直到被密码更改或显式吊销命令撤销），并且可以无限次使用。
+
+对于已验证电子邮件地址的帐户(具有会话令牌sessionToken)的客户端可以使用api获取经由签名的浏览器 ID/用户配置证书。然后，可以使用此证书生成已签名的浏览器 ID assertions，传递到服务器的./certificate/sign。过程如下图所示：
+
+![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/3.png)
+
+### 更改/找回密码
+
+当用户更改其密码（即他们仍然知道旧密码）时，或当用户忘记密码时，需要重置账户和密码。下面将分别讨论两者情况：
+
+当需要**利用旧密码重置密码**时，需要完成下图流程：
+
+其主要协议流程为验证用户身份，之后用户使用旧密码将存储在服务器的wrap(kb)解密，然后使用从新密码派生的新密码重新包装kb生成新的wrap(kb)。
+
+![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/4.png)
+
+对于**找回密码**，用户首先需要访问fxa-content-server（即服务器）上的页面，服务器向用户发送一封带有恢复代码的电子邮件，然后在用户单击该电子邮件中的链接，利用存储的邮件地址来验证自己的身份，从而重置密码。
+
+具体而言，当用户申请重置密码，服务器将相应的帐户标记为“待恢复”，为该帐户分配一个随机密码ForgotToken，创建一个恢复代码，并向用户发送电子邮件，其中包含URL（指向fxa-content-server）、passwordForgotToken和恢复代码作为query-args。
+
+当用户单击链接时，加载的 fxa 内容服务器页面会将令牌和代码提交到 API。当服务器看到匹配的令牌和代码时，它会分配一个backtoken并将其返回到提交它们的客户端（页面）。然后，客户端可以创建新的密码并重复创建账户时的密码创建流程，如下图所示：
+
+ ![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/5.png)
+
+值得注意的是，一旦重置密码，将会丢失所有B类数据，这避免盗取邮箱的攻击者获得用户的所有口令，用户只能得到存储的A类数据。
+
+这个设置是必要的，如果B类和A类不分开存储，那么同时也会有攻击服务器的攻击者，一旦得到服务器控制权，就可以解密A类，但是无法解密B类口令。
+
+### 使用的加密手段
+
+本协议使用基于 HKDF 的派生密码用于保护本协议中请求的内容。HKDF 用于创建多个与消息长度相等的随机字节，然后将这些字节与明文进行 XOR 运算以生成密文。然后从密文计算 HMAC，以保护消息的完整性。之所以使用该方案是因为HKDF首先可证明计算安全，其次易于指定且易于实现（只需要实现HMAC和异或操作）。
+
+### 安全性分析
+
+首先，攻击者可以暴力枚举kb，但这意味着他们必须对要测试的每个猜测的密码进行1000轮PBKDF和其他操作，这是计算上困难的。
+
+其次，攻击者通过web漏洞如果控制了服务器（如利用中国蚁剑等webshell工具获得服务器webshell），获得了文件读写权限，那么攻击者也无法解密wrap(kB)。此时A类数据将会被窃取。
+
+第三，即使攻击者利用盗取的邮箱重置用户密码，也无法访问B类数据，B类数据会丢失。此时A类数据将会被窃取。
+
+### 旧版协议(SRP协议)
+
+有待后续补充
+
+
+
+## Chrom记住密码原理概述
+
+
+
+
+
+
+**参考资料：**
+
+【1】https://baike.baidu.com/item/%E6%A2%85%E5%85%8B%E5%B0%94%E6%A0%91/22456281?fr=aladdin
+
+【2】https://blog.csdn.net/shangsongwww/article/details/119272573
+
+【3】https://zhuanlan.zhihu.com/p/32924994
+
+【4】https://www.jianshu.com/p/5e2483413537?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation
+
+【5】https://sickworm.com/?p=1749
+
+【6】https://www.jianshu.com/p/e67452930dcc?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes
+
+【7】https://copyfuture.com/blogs-details/20211208055551745d
+
+【8】https://www.youtube.com/watch?v=9S8rmW8LD5o&t=3s
+
+【9】Substrate官方文档：https://substrate.dev/
+
+【10】[Google search : Wiki Trie](https://en.wikipedia.org/wiki/Trie)
+
+【11】arity介绍：https://www.parity.io/
+
