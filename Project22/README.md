@@ -86,7 +86,7 @@ type (
 
 在MPT中，指向下一级节点的指针是使用节点的确定性加密hash，而不是传统意义上下一级节点地址的指针，如果给定的trie的根哈希是公开的，则任何人都可以通过给出给定path上的所有节点, 来证明在给定path上存在一个给定值 ，对于攻击者,不可能提供一个不存在的（key，value）对的证明, 因为根哈希最终基于它下面的所有哈希，所以任何修改都会改变根哈希。
 
-![image]([Projects-of-CSPIE/Project22/picture/1.png at main · xin-li-sdu/Projects-of-CSPIE · GitHub](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project22/picture/1.png))
+![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project22/picture/1.png)
 
 ### MPT操作<sup>[3]</sup>
 
