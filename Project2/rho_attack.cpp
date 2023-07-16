@@ -95,7 +95,7 @@ int main() {
     rho_attack(n);
     clock_t endTime = clock();
     double executionTime = (endTime - startTime) * 1000.0 / CLOCKS_PER_SEC;
-    std::cout << "执行时间为：" << executionTime << "毫秒" << std::endl;
+    std::cout << 杩愯鏃堕棿" << executionTime << "ms" << std::endl;
 
     return 0;
 }
