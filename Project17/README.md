@@ -25,7 +25,7 @@
 
 Merkel tree示例如图所示：
 
-![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/1.png)
+![image](./picture/1.png)
 
 当用户在客户端输入email和password后，运行100轮派生函数PBKDF2，使用用户的邮件地址作为salt生成quickStretchedPW，然后将其作为HKDF的参数，得到authPW，在此过程中得到了密码强度足够(主要是保证随机性)的派生密钥authPW。最后，将邮件地址和对应的authPW发送给服务器。
 
@@ -37,7 +37,7 @@ Merkel tree示例如图所示：
 
 我们先来谈谈获得会话令牌，主要步骤如下图所示：
 
-![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/2.png)
+![image](./picture/2.png)
 
 要将客户端连接到服务器，需要使用登录协议将电子邮件+密码对转换为sessionToken。
 
@@ -49,7 +49,7 @@ Merkel tree示例如图所示：
 
 对于已验证电子邮件地址的帐户(具有会话令牌sessionToken)的客户端可以使用api获取经由签名的浏览器 ID/用户配置证书。然后，可以使用此证书生成已签名的浏览器 ID assertions，传递到服务器的./certificate/sign。过程如下图所示：
 
-![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/3.png)
+![image]./picture/3.png)
 
 ### 更改/找回密码
 
@@ -59,7 +59,7 @@ Merkel tree示例如图所示：
 
 其主要协议流程为验证用户身份，之后用户使用旧密码将存储在服务器的wrap(kb)解密，然后使用从新密码派生的新密码重新包装kb生成新的wrap(kb)。
 
-![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/4.png)
+![image](./picture/4.png)
 
 对于**找回密码**，用户首先需要访问fxa-content-server（即服务器）上的页面，服务器向用户发送一封带有恢复代码的电子邮件，然后在用户单击该电子邮件中的链接，利用存储的邮件地址来验证自己的身份，从而重置密码。
 
@@ -67,7 +67,7 @@ Merkel tree示例如图所示：
 
 当用户单击链接时，加载的 fxa 内容服务器页面会将令牌和代码提交到 API。当服务器看到匹配的令牌和代码时，它会分配一个backtoken并将其返回到提交它们的客户端（页面）。然后，客户端可以创建新的密码并重复创建账户时的密码创建流程，如下图所示：
 
- ![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/5.png)
+ ![image](./picture/5.png)
 
 值得注意的是，一旦重置密码，将会丢失所有B类数据，这避免盗取邮箱的攻击者获得用户的所有口令，用户只能得到存储的A类数据。
 
@@ -151,7 +151,7 @@ if __name__ == '__main__':
 
 可以得到解密后的账户信息：
 
-![image](https://github.com/xin-li-sdu/Projects-of-CSPIE/blob/main/Project17/picture/7.png)
+![image](./picture/7.png)
 
 ## 两者浏览器记住密码插件的比较
 
