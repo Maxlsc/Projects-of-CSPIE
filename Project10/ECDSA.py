@@ -1,10 +1,10 @@
 import secrets
 
-def boolQR(n, p):
+def QR(n, p):
     return pow(n, (p - 1) // 2, p)
 
 def solveQR(n, p):
-    assert boolQR(n, p) == 1
+    assert QR(n, p) == 1
     if p % 4 == 3:
         return pow(n, (p + 1) // 4, p)
     q = p - 1
@@ -13,7 +13,7 @@ def solveQR(n, p):
         q = q // 2
         s += 1
     for z in range(2, p):
-        if boolQR(z, p) == p - 1:
+        if QR(z, p) == p - 1:
             c = pow(z, q, p)
             break
     r = pow(n, (q + 1) // 2, p)
@@ -35,7 +35,7 @@ def solveQR(n, p):
                 i = 0
         return r
 
-def mod_invese(B, N):
+def invese(B, N):
     if B == N:
         return (B, 1, 0)
     else:
@@ -70,7 +70,7 @@ def mod_invese(B, N):
 
 
 def xgcd(b, n):
-    (g, x, y) = mod_invese(b, n)
+    (g, x, y) = invese(b, n)
 
     if g == 1:
         return x % n
@@ -86,7 +86,7 @@ x = 5506626302227734366957871889516853432625060345377759417550018736038911672924
 y = 32670510020758816978083085130507043184471273380659243275938904335757337482424
 G = (x, y)
 
-def add(P, Q):  # P!=Q
+def add(P, Q): 
     if P == 0 and Q == 0:
         return 0
     elif P == 0:
@@ -106,7 +106,7 @@ def add(P, Q):  # P!=Q
         return (Z[0], Z[1])
 
 
-def epoint_add1(P):  # P==Q
+def epoint_add1(P):  
     Z = []
     tmp = (3 * P[0] ** 2 + a) * xgcd(2 * P[1], p) % p
     Z.append((tmp ** 2 - 2 * P[0]) % p)
