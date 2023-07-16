@@ -297,4 +297,4 @@ if __name__ == '__main__':
 ```
 
 得到结果如下图，成功推测出可能得公钥：
-![image](https://github.com/Maxlsc/Projects-of-CSPIE/blob/main/Project10/picture/1.png)
+![image](./picture/1.png)
