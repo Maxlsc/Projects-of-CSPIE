@@ -10,11 +10,13 @@
 
 | 小组成员姓名 |                Github账户名称                | 学号         |
 | :----------: | :------------------------------------------: | ------------ |
-|    刘舒畅    |     [Maxlsc ](https://github.com/Maxlsc)     |              |
+|    刘舒畅    |     [Maxlsc ](https://github.com/Maxlsc)     | 202122460175 |
 |     李昕     | [xin-li-sdu ](https://github.com/xin-li-sdu) | 202100460065 |
 |    王子瑞    |       [skqf ](https://github.com/skqf)       |              |
 
 ## 项目完成进度及实现效果
+
+（注：各Project文件夹下有对应项目的详细报告，此处仅为效果汇总）
 
 **SM3：**
 
