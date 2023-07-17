@@ -3,7 +3,9 @@
 #include <string.h>
 #include <time.h>
 
-const uint8_t sbox_enc[256] = {
+#define ROR8(w) (((w) >> 8) | ((w) << 24))
+
+const uint8_t ESBOX[256] = {
 	0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
 	0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
 	0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0,
@@ -38,7 +40,7 @@ const uint8_t sbox_enc[256] = {
 	0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16
 };
 
-const uint8_t sbox_dec[256] = {
+const uint8_t DSBOX[256] = {
 	0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38,
 	0xbf, 0x40, 0xa3, 0x9e, 0x81, 0xf3, 0xd7, 0xfb,
 	0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f, 0xff, 0x87,
@@ -73,14 +75,30 @@ const uint8_t sbox_dec[256] = {
 	0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d
 };
 
-#define ROR8(w) (((w) >> 8) | ((w) << 24))
+void shift_rows(uint8_t* state)
+{
+	uint8_t t;
+	t = state[1]; state[1] = state[5]; state[5] = state[9]; state[9] = state[13]; state[13] = t;
+	t = state[2]; state[2] = state[10]; state[10] = t;
+	t = state[6]; state[6] = state[14]; state[14] = t;
+	t = state[3]; state[3] = state[15]; state[15] = state[11]; state[11] = state[7]; state[7] = t;
+}
+
+void inv_shift_rows(uint8_t* state)
+{
+	uint8_t t;
+	t = state[1]; state[1] = state[13]; state[13] = state[9]; state[9] = state[5]; state[5] = t;
+	t = state[2]; state[2] = state[10]; state[10] = t;
+	t = state[6]; state[6] = state[14]; state[14] = t;
+	t = state[3]; state[3] = state[7]; state[7] = state[11]; state[11] = state[15]; state[15] = t;
+}
 
 uint32_t sub_bytes(uint32_t word)
 {
 	uint32_t result = 0;
 	for (int8_t i = 24; i >= 0; i -= 8) {
 		result <<= 8;
-		result |= sbox_enc[uint8_t((word >> i) & 0xff)];
+		result |= ESBOX[uint8_t((word >> i) & 0xff)];
 	}
 	return result;
 }
@@ -90,27 +108,9 @@ uint32_t inv_sub_bytes(uint32_t word)
 	uint32_t result = 0;
 	for (int i = 24; i >= 0; i -= 8) {
 		result <<= 8;
-		result |= sbox_dec[uint8_t((word >> i) & 0xff)];
+		result |= DSBOX[uint8_t((word >> i) & 0xff)];
 	}
 	return result;
-}
-
-void shift_rows(uint8_t *state)
-{
-	uint8_t t;
-	t = state[1]; state[1] = state[5]; state[5] = state[9]; state[9] = state[13]; state[13] = t;
-	t = state[2]; state[2] = state[10]; state[10] = t;
-	t = state[6]; state[6] = state[14]; state[14] = t;
-	t = state[3]; state[3] = state[15]; state[15] = state[11]; state[11] = state[7]; state[7] = t;
-}
-
-void inv_shift_rows(uint8_t *state)
-{
-	uint8_t t;
-	t = state[1]; state[1] = state[13]; state[13] = state[9]; state[9] = state[5]; state[5] = t;
-	t = state[2]; state[2] = state[10]; state[10] = t;
-	t = state[6]; state[6] = state[14]; state[14] = t;
-	t = state[3]; state[3] = state[7]; state[7] = state[11]; state[11] = state[15]; state[15] = t;
 }
 
 uint32_t mix_columns(uint32_t word)
@@ -183,7 +183,7 @@ void add_round_key(uint32_t *state, uint32_t *key)
 	}
 }
 
-uint8_t gen_keys(const uint8_t *input_key, uint8_t *keys, const uint16_t keylen)
+uint8_t keygen(const uint8_t *input_key, uint8_t *keys, const uint16_t keylen)
 {
 
 #define G(word, rcon) (sub_bytes(ROR8(word))) ^ (uint32_t(rcon))
@@ -191,9 +191,8 @@ uint8_t gen_keys(const uint8_t *input_key, uint8_t *keys, const uint16_t keylen)
 	uint8_t i, numkeys;
 	uint32_t kwords[60];
 	uint32_t rcon;
-
-	switch(keylen) {
-
+	switch(keylen) 
+	{
 	case 128:
 		numkeys = 11;
 		for (i = 0; i < 4; i++) {
@@ -210,43 +209,6 @@ uint8_t gen_keys(const uint8_t *input_key, uint8_t *keys, const uint16_t keylen)
 			}
 		}
 		break;
-	
-	case 192:
-		numkeys = 13;
-		for (i = 0; i < 6; i++) {
-			kwords[i] = ((uint32_t *)input_key)[i];
-		}
-		rcon = 1;
-		for (i = 6; i < 52; i++) {
-			if (i % 6) {
-				kwords[i] = kwords[i-6] ^ kwords[i-1];
-			} else {
-				kwords[i] = kwords[i-6] ^ G(kwords[i-1], rcon);
-				rcon <<= 1;
-				if (rcon & 0x100) rcon ^= 0x11b;
-			}
-		}
-		break;
-
-	case 256:
-		numkeys = 15;
-		for (i = 0; i < 8; i++) {
-			kwords[i] = ((uint32_t *)input_key)[i];
-		}
-		rcon = 1;
-		for (i = 8; i < 60; i++) {
-			if (i & 3) {
-				kwords[i] = kwords[i-8] ^ kwords[i-1];
-			} else if (i & 7) {
-				kwords[i] = kwords[i-8] ^ sub_bytes(kwords[i-1]);
-			} else {
-				kwords[i] = kwords[i-8] ^ G(kwords[i-1], rcon);
-				rcon <<= 1;
-				if (rcon & 0x100) rcon ^= 0x11b;
-			}
-		}
-		break;
-
 	default:
 		return 0;
 	}
@@ -305,7 +267,7 @@ void decrypt(uint8_t *input, uint8_t *output, uint8_t *keys, uint8_t numkeys)
 	memcpy(output, state, 16);
 }
 
-#define REPEATS 100000000
+#define Rnum 100000000
 
 int main()
 {
@@ -348,43 +310,43 @@ int main()
 	uint8_t keys[176];
 	time_t t0, t1;
 	time(&t0);
-	gen_keys(ik, keys, 128);
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	keygen(ik, keys, 128);
+	for (uint64_t i = 0; i < Rnum; i++) {
 		encryption_round((uint32_t *)block0, (uint32_t *)(keys + 160));
 	}
 	for (uint8_t i = 0; i < 16; i++) printf("%02x", (unsigned char)block0[i]);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		encryption_round((uint32_t *)block1, (uint32_t *)(keys + 160));
 	}
 	for (uint8_t i = 0; i < 16; i++) printf("%02x", (unsigned char)block1[i]);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		encryption_round((uint32_t *)block2, (uint32_t *)(keys + 160));
 	}
 	for (uint8_t i = 0; i < 16; i++) printf("%02x", (unsigned char)block2[i]);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		encryption_round((uint32_t *)block3, (uint32_t *)(keys + 160));
 	}
 	for (uint8_t i = 0; i < 16; i++) printf("%02x", (unsigned char)block3[i]);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		encryption_round((uint32_t *)block4, (uint32_t *)(keys + 160));
 	}
 	for (uint8_t i = 0; i < 16; i++) printf("%02x", (unsigned char)block4[i]);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		encryption_round((uint32_t *)block5, (uint32_t *)(keys + 160));
 	}
 	for (uint8_t i = 0; i < 16; i++) printf("%02x", (unsigned char)block5[i]);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		encryption_round((uint32_t *)block6, (uint32_t *)(keys + 160));
 	}
 	for (uint8_t i = 0; i < 16; i++) printf("%02x", (unsigned char)block6[i]);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		encryption_round((uint32_t *)block7, (uint32_t *)(keys + 160));
 	}
 	for (uint8_t i = 0; i < 16; i++) printf("%02x", (unsigned char)block7[i]);

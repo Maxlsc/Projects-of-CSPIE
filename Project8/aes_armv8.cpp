@@ -2,9 +2,14 @@
 #include <stdint.h>
 #include <string.h>
 #include <time.h>
+#include <iostream>
+using namespace std;
 #include "arm_neon.h"
 
-const uint8_t sbox_enc[256] = {
+uint8x16x4_t sboxv_enc[4];
+uint8x16x4_t sboxv_dec[4];
+
+const uint8_t ESBOX[256] = {
 	0x63, 0xca, 0xb7, 0x04, 0x7c, 0x82, 0xfd, 0xc7,
 	0x77, 0xc9, 0x93, 0x23, 0x7b, 0x7d, 0x26, 0xc3,
 	0xf2, 0xfa, 0x36, 0x18, 0x6b, 0x59, 0x3f, 0x96,
@@ -39,7 +44,7 @@ const uint8_t sbox_enc[256] = {
 	0x8b, 0x1d, 0x28, 0xbb, 0x8a, 0x9e, 0xdf, 0x16
 };
 
-const uint8_t sbox_dec[256] = {
+const uint8_t DSBOX[256] = {
 	0x52, 0x7c, 0x54, 0x08, 0x09, 0xe3, 0x7b, 0x2e,
 	0x6a, 0x39, 0x94, 0xa1, 0xd5, 0x82, 0x32, 0x66,
 	0x30, 0x9b, 0xa6, 0x28, 0x36, 0x2f, 0xc2, 0xd9,
@@ -74,8 +79,33 @@ const uint8_t sbox_dec[256] = {
 	0xec, 0x9c, 0x99, 0x0c, 0x5f, 0xef, 0x61, 0x7d
 };
 
-uint8x16x4_t sboxv_enc[4];
-uint8x16x4_t sboxv_dec[4];
+
+static const uint8x16_t ror32by8 = {
+	0x1, 0x2, 0x3, 0x0, 0x5, 0x6, 0x7, 0x4,
+	0x9, 0xa, 0xb, 0x8, 0xd, 0xe, 0xf, 0xc
+};
+
+void printnum(uint8x16_t v)
+{
+	uint8_t c[16];
+	vst1q_u8(c, v);
+	for (uint8_t i = 0; i < 16; i++) printf("%02x", (unsigned char)c[i]);
+}
+
+
+void load_encryption_table()
+{
+	for (int i = 0; i < 4; i++) {
+		sboxv_enc[i] = vld4q_u8(ESBOX + (i << 6));
+	}
+}
+
+void load_decryption_table()
+{
+	for (int i = 0; i < 4; i++) {
+		sboxv_dec[i] = vld4q_u8(DSBOX + (i << 6));
+	}
+}
 
 static const uint8x16_t shift_rows = {
 	0x0, 0x5, 0xa, 0xf, 0x4, 0x9, 0xe, 0x3,
@@ -86,40 +116,6 @@ static const uint8x16_t inv_shift_rows = {
 	0x0, 0xd, 0xa, 0x7, 0x4, 0x1, 0xe, 0xb,
 	0x8, 0x5, 0x2, 0xf, 0xc, 0x9, 0x6, 0x3
 };
-
-static const uint8x16_t ror32by8 = {
-	0x1, 0x2, 0x3, 0x0, 0x5, 0x6, 0x7, 0x4,
-	0x9, 0xa, 0xb, 0x8, 0xd, 0xe, 0xf, 0xc
-};
-
-void print_vector(uint8x16_t v)
-{
-	uint8_t c[16];
-	vst1q_u8(c, v);
-	for (uint8_t i = 0; i < 16; i++) printf("%02x", (unsigned char)c[i]);
-}
-
-void print_array(uint8x16x4_t a)
-{
-	//uint8_t c[64];
-	//vst1q_u8_x4(c, a);
-	//for (uint8_t i = 0; i < 64; i++) printf("%02x ", (unsigned char)c[i]);
-	//not able to use u8_x4
-}
-
-void load_encryption_table()
-{
-	for (int i = 0; i < 4; i++) {
-		sboxv_enc[i] = vld4q_u8(sbox_enc + (i << 6));
-	}
-}
-
-void load_decryption_table()
-{
-	for (int i = 0; i < 4; i++) {
-		sboxv_dec[i] = vld4q_u8(sbox_dec + (i << 6));
-	}
-}
 
 static inline uint8x16_t sl_xor(uint8x16_t tmp1)
 {
@@ -133,16 +129,15 @@ static inline uint8x16_t sl_xor(uint8x16_t tmp1)
 	return tmp1;
 }
 
-uint8_t gen_keys(const uint8_t *input_key, uint8x16_t *keys, const uint16_t keylen)
+uint8_t keygen(const uint8_t *input_key, uint8x16_t *keys, const uint16_t keylen)
 {
 
 	uint8_t i, numkeys;
 	uint32_t rcon;
 	uint8x16_t temp, v;
 	uint64_t u64;
-
-	switch(keylen) {
-
+	switch(keylen) //three diff keylen
+	{
 	case 128:
 		numkeys = 11;
 		memcpy(keys, input_key, 16);
@@ -271,32 +266,26 @@ uint8_t gen_keys(const uint8_t *input_key, uint8x16_t *keys, const uint16_t keyl
 			vshrq_n_u32(vreinterpretq_u32_u8(v), 8)), vdupq_n_u32(rcon));
 		*keys = veorq_u8(sl_xor(*(keys - 2)), temp);
 		break;
-
 	default:
 		return 0;
 	}
-
 	return numkeys;
 }
 
 static inline uint8x16_t encryption_round(uint8x16_t state, uint8x16_t key)
 {
 	uint8x16_t v;
-
 	// SubBytes    
 	v = vqtbl4q_u8(sboxv_enc[0], state);
 	v = vqtbx4q_u8(v, sboxv_enc[1], state - 0x40);
 	v = vqtbx4q_u8(v, sboxv_enc[2], state - 0x80);
 	v = vqtbx4q_u8(v, sboxv_enc[3], state - 0xc0);
-
 	// ShiftRows
 	v = vqtbl1q_u8(v, shift_rows);
-
 	// MixColumns
 	state = (v << 1) ^ (uint8x16_t)(((int8x16_t)v >> 7) & 0x1b);
 	state ^= (uint8x16_t)vrev32q_u16((uint16x8_t)v);
 	state ^= vqtbl1q_u8(v ^ state, ror32by8);
-
 	// AddRoundKey
 	return veorq_u8(state, key);
 }
@@ -369,7 +358,7 @@ uint8x16_t decrypt(uint8x16_t block, uint8x16_t *keys, uint8_t numkeys)
 	return veorq_u8(v, *keys);
 }
 
-#define REPEATS 100000000
+#define Rnum 100000000
 
 int main()
 {
@@ -413,46 +402,46 @@ int main()
 	time_t t0, t1;
 	time(&t0);
 	load_encryption_table();
-	gen_keys(ik, keys, 128);
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	keygen(ik, keys, 128);//choose 128 len
+	for (uint64_t i = 0; i < Rnum; i++) {
 		block0 = encryption_round(block0, keys[10]);
 	}
-	print_vector(block0);
+	printnum(block0);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		block1 = encryption_round(block1, keys[10]);
 	}
-	print_vector(block1);
+	printnum(block1);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		block2 = encryption_round(block2, keys[10]);
 	}
-	print_vector(block2);
+	printnum(block2);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		block3 = encryption_round(block3, keys[10]);
 	}
-	print_vector(block3);
+	printnum(block3);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		block4 = encryption_round(block4, keys[10]);
 	}
-	print_vector(block4);
+	printnum(block4);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		block5 = encryption_round(block5, keys[10]);
 	}
-	print_vector(block5);
+	printnum(block5);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		block6 = encryption_round(block6, keys[10]);
 	}
-	print_vector(block6);
+	printnum(block6);
 	printf("\n\r");
-	for (uint64_t i = 0; i < REPEATS; i++) {
+	for (uint64_t i = 0; i < Rnum; i++) {
 		block7 = encryption_round(block7, keys[10]);
 	}
-	print_vector(block7);
+	printnum(block7);
 	printf("\n\r");
 	time(&t1);
 	printf("%ld seconds total\n\r", t1 - t0);
