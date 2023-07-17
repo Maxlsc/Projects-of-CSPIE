@@ -73,7 +73,7 @@ static void CF(uint8_t* B,uint32_t* V){
 
 static void print(uint8_t *p,int len){
     for(int i = 0; i < len; i++){
-        printf("%x",p[i]);
+        printf("%02x",p[i]);
     }
     printf("\n");
 }
