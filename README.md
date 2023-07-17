@@ -12,7 +12,7 @@
 | :----------: | :------------------------------------------: | ------------ |
 |    刘舒畅    |     [Maxlsc ](https://github.com/Maxlsc)     | 202122460175 |
 |     李昕     | [xin-li-sdu ](https://github.com/xin-li-sdu) | 202100460065 |
-|    王子瑞    |       [skqf ](https://github.com/skqf)       |              |
+|    王子瑞    |       [skqf ](https://github.com/skqf)       | 202100460088 |
 
 ## 项目完成进度及实现效果
 
