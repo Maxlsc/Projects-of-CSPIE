@@ -115,7 +115,7 @@ void get_random(uint8_t* s, int n){
     }
     return ;
 }
-
+const char tab[16] = {'1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 unordered_map<string,string> dict;
 void birthday_attack(int n){
     auto begin = std::chrono::high_resolution_clock::now();
@@ -128,7 +128,12 @@ void birthday_attack(int n){
         sm3_hash(s,8,hash);
         for(int i = 0; i < 8; i++) s0 += s[i];
         // s0[32] = 0;
-        for(int i = 0; i < n ; i++) h += hash[i];
+        int m = (n/2);
+        for(int i = 0; i < m ; i++){
+            h += tab[(hash[i]>>4)&(0xf)];
+            h += tab[(hash[i]>>0)&(0xf)];
+        }
+        if(n%2) h += tab[(hash[m]>>4)&(0xf)];
         // h[n] = 0;
 
         if(dict.count(h) == 0) dict[h] = s0;
@@ -154,8 +159,8 @@ void birthday_attack(int n){
 }
 
 int main(){    
-    int n = 6;
-
+    int n;
+    scanf("%d",&n);
     birthday_attack(n);
     return 0;
 }
