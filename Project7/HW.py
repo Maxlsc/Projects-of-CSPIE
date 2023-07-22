@@ -46,14 +46,12 @@ class HashWire:
             arr[i],arr[j] = arr[j],arr[i]
         return arr
     
-    def PLA(self,k,r):
-        dk = ceil(log(k,self.b))
-        K = self.divide(k)
+    def PLA(self,p,r):
         z = b''
-        if dk < self.d:
-            z = self.p
-        for i in range(dk):
-            z = z+self.Hash(r[i],K[i])
+        if len(r) < self.d:
+            z = p
+        for i in range(len(r)):
+            z = z+r[i]
         return z
     
     def Comm(self,k):
@@ -72,7 +70,7 @@ class HashWire:
             for i in range(len(K)):
                 r.append(self.seed[i][K[i]])
             salt = self.KDF(self.seed_m+bytes(x))
-            comm.append(sha256(salt+self.PLA(x,r)).digest())
+            comm.append(sha256(salt+self.PLA(self.p,r)).digest())
         
         while len(comm)<self.d:
             comm.append(None)
