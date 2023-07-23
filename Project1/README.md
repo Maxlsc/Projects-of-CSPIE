@@ -18,7 +18,7 @@
 
 ### python版本
 
-![python](assets/QB7(PS)$OWGBK%Y{M9UFKQD.png)
+![python](assets/python.png)
 
 23s/32bit碰撞
 
