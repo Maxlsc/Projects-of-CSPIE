@@ -1,6 +1,6 @@
 # 比较Firefox和谷歌的记住密码插件的实现区别
 
-本md文件即为research-report
+本md文件即为research-report   本project由李昕负责
 
 ## 实验目标及方法
 
