@@ -7,6 +7,7 @@
 #include <time.h>
 #include <intrin.h>
 #include <iostream>
+// #include <immintrin.h>
 using namespace std;
 
 #define FF0(x,y,z) x^y^z
@@ -49,6 +50,8 @@ static void CF(uint8_t* B,uint32_t* V){
                 |((uint32_t)B[i * 4 + 3] << 0 ) & 0x000000FF;
     }
     for(int i = 16; i < 68; i++) w0[i] = P1(w0[i-16]^w0[i-9]^rot(w0[i-3],15))^rot(w0[i-13],7)^w0[i-6];
+    
+    // for(int i = 0; i < 64/4; i++) *(__m128i*)(w+i*4) = _mm_xor_si128(*(__m128i*)(w0+i*4), *(__m128i*)(w0+i*4+4));
     for(int i = 0; i < 64; i++) w[i] = w0[i] ^ w0[i+4];
 
     uint32_t V0[8];
@@ -107,20 +110,24 @@ void sm3_hash(uint8_t* data, uint32_t data_len, uint8_t* res){
     }
 }
 
+char b[(1<<30)+10];
 int main(){
-    char b[] = "test";
     char hash[10086];
 
-    int n = 1000000;
+    int n = 1<<30;
+    for(int i = 0; i < n; i++){
+        b[i] = 'a';
+    }
+    b[n] = '\0';
+    printf("ok\n");
     auto begin = std::chrono::high_resolution_clock::now();
 
-    for(int i = 0; i < n; i++)
+    // for(int i = 0; i < n; i++)
     sm3_hash((uint8_t*)b,(uint32_t)strlen(b),(uint8_t*)hash);
     
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::ratio<1, 1000>> diff = end - begin;
-    // std::cout << HZ*diff.count()/(n*N*N*N) << "\n";
-    std::cout << diff.count()/n << "ms\t";
+    std::cout << diff.count() << "ms\t";
 
     print((uint8_t*)hash,32);
     return 0;
