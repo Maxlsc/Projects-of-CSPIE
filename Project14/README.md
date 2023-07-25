@@ -1,19 +1,22 @@
-from gmssl.sm2 import CryptSM2
-from gmssl.sm4 import CryptSM4
-from gmssl import sm4
-import pickle
+# Project14: Implement a PGP scheme with SM2
 
-import random
+本项目由刘舒畅负责。
 
-def getRandom(randomlength=16):
-    upperLetter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    lowerLetter = "abcdefghigklmnopqrstuvwxyz"
-    digits="0123456789"
-    wpecialCharacters = "!@#$%&_-.+="
-    str_list =[random.choice(upperLetter+lowerLetter+digits+wpecialCharacters) for _ in range(randomlength)]
-    random_str =''.join(str_list)
-    return random_str
+## 任务分析
 
+![project](assets/project.png)
+
+该任务实际上是实现一个基于SM2（公钥密码）与对称密码的混合加密，并以此实现一个PGP。
+
+## 实现细节
+
+实际上，现有的PGP除了通过KEM封装对称密码的密钥，还会在明文后级联一个公钥的签名$Sign_{sk_A}(m)$，用于进行对明文来源的验证。因此，我们在我们的PGP类中实现了这一功能。
+
+此外，为了方便观察，我们采用可见字符进行对称密钥的赋值。
+
+具体到使用算法上，我们使用gmssl库中的sm2与sm4实现混合加密，代码如下：
+
+```python
 class PGP:
     def __init__(self):
         self.sm2C = CryptSM2("0","0")
@@ -46,9 +49,10 @@ class PGP:
         m,sign = pickle.loads(sm4_t.crypt_cbc(iv,c1))
         assert sm2_t.verify(sign.decode(),m)
         return m
+```
 
+## 实现效果
 
-tmp = PGP()
-m = b'This is a text.'
-c = tmp.enc(m,tmp.publickey)
-print("message is {}".format(tmp.dec(c,tmp.publickey)))
+![output](assets/output.png)
+
+可成功解密并验证。
