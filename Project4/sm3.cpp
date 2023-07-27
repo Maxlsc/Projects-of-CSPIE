@@ -10,19 +10,20 @@
 // #include <immintrin.h>
 using namespace std;
 
-#define FF0(x,y,z) x^y^z
-#define FF1(x,y,z) (x&y)|(x&z)|(y&z)
+#define FF0(x,y,z) (x^y^z)
+#define FF1(x,y,z) ((x&y)|(x&z)|(y&z))
 
-#define GG0(x,y,z) x^y^z
-#define GG1(x,y,z) (x&y)|((~x)&z)
+#define GG0(x,y,z) (x^y^z)
+#define GG1(x,y,z) ((x&y)|((~x)&z))
 
-static uint32_t rot(uint32_t a, uint8_t n)
-{
-    return (a << n) | (a >> (32 - n));
-}
+// static uint32_t rot(uint32_t a, uint8_t n)
+// {
+//     return (a << n) | (a >> (32 - n));
+// }
+#define rot(a,n) ((a << n)|(a >> (32 - n)))
 
-#define P0(x) x^rot(x,9)^rot(x,17)
-#define P1(x) x^rot(x,15)^rot(x,23)
+#define P0(x) (x^(rot(x,9))^(rot(x,17)))
+#define P1(x) (x^(rot(x,15))^(rot(x,23)))
 
 static const uint32_t IV[8] =
 {
@@ -49,9 +50,8 @@ static void CF(uint8_t* B,uint32_t* V){
                 |((uint32_t)B[i * 4 + 2] << 8 ) & 0x0000FF00
                 |((uint32_t)B[i * 4 + 3] << 0 ) & 0x000000FF;
     }
-    for(int i = 16; i < 68; i++) w0[i] = P1(w0[i-16]^w0[i-9]^rot(w0[i-3],15))^rot(w0[i-13],7)^w0[i-6];
+    for(int i = 16; i < 68; i++) w0[i] = P1(((w0[i-16]^w0[i-9])^(rot(w0[i-3],15))))^((rot(w0[i-13],7))^w0[i-6]);
     
-    // for(int i = 0; i < 64/4; i++) *(__m128i*)(w+i*4) = _mm_xor_si128(*(__m128i*)(w0+i*4), *(__m128i*)(w0+i*4+4));
     for(int i = 0; i < 64; i++) w[i] = w0[i] ^ w0[i+4];
 
     uint32_t V0[8];
@@ -115,7 +115,7 @@ int main(){
     char hash[10086];
 
     int n = 1<<30;
-    for(int i = 0; i < n; i++){
+    for(int i = 0; i < 8; i++){
         b[i] = 'a';
     }
     b[n] = '\0';
