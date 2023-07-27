@@ -3,17 +3,15 @@ from random import randint
 from sympy.ntheory.residue_ntheory import nthroot_mod
 from hashlib import sha256
 class ECMH:
-    def __init__(self) -> None:
+    def __init__(self,mode) -> None:
         self.p = 0xFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF
         self.n = 0xFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B21C6052B53BBF40939D54123
         self.a = 0xFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFC
         self.b = 0x28E9FA9E9D9F5E344D5A9E4BCF6509A7F39789F515AB8F92DDBCBD414D940E93
-        self.G = (0x32C4AE2C1F1981195F9904466A39C9948FE30BBFF2660BE1715A4589334C74C7, 0xBC3736A2F4F6779C59BDCEE36B692153D0A9877CC62A474002DF32E52139F0A0)
-
-        self.d = randint(1, self.n-1)
-        self.P = self.mul(self.d, self.G)
 
         self.Sum = None
+
+        self.mode = mode
 
     def is_on_curve(self,P):
         if not P:
@@ -63,6 +61,12 @@ class ECMH:
         return acc
     
     def EChash(self,m):
+        if self.mode == 1:
+            return self.fab(m)
+        else:
+            return self.TaI(m)
+
+    def TaI(self,m):
         u = sha256(m.encode()).hexdigest()
         for i in range(10):
             x = int(sha256(('0'+hex(i)[2]+u).encode()).hexdigest(),16)
@@ -70,6 +74,19 @@ class ECMH:
             if res != None:
                 assert self.is_on_curve((x,res))
                 return (x,res)
+
+    def fab(self,m):
+        u = int(sha256(m.encode()).hexdigest(),16)
+        p = self.p
+        a = self.a
+        b = self.b
+        v = ((3*a - pow(u,4,p))*(inverse(6*u,p)))%p
+        x = (nthroot_mod((pow(v,2,p)-b-(pow(u,6,p)*inverse(27,p))+p)%p,3,p)+pow(u,2,p)*inverse(3,p))%p
+        y = (u*x+v)%p
+        if u == 0:
+            return None
+        assert(self.is_on_curve((x,y)))
+        return (x,y)
             
     def ECMH_add(self,m):
         self.Sum = self.add(self.Sum, self.EChash(m))
@@ -80,7 +97,7 @@ class ECMH:
         self.Sum = self.add(self.Sum, P)
 
 
-tmp = ECMH()
+tmp = ECMH(1)
 tmp.ECMH_add("123")
 print(tmp.Sum)
 tmp.ECMH_add("123")
