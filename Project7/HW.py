@@ -2,6 +2,7 @@ from smt.tree import *
 from smt.proof import *
 from math import ceil,log
 from random import randint
+import random
 from Crypto.Random import get_random_bytes
 from Crypto.Protocol.KDF import scrypt
 from hashlib import sha256
@@ -12,6 +13,12 @@ class HashWire:
         self.d = ceil(log(self.n,self.b))
         self.seed_m = b'seed'
         self.p = sha256(self.seed_m).digest()
+        self.seed = [self.KDF(self.seed_m+bytes(i)) for i in range(self.d)]
+        for i in range(self.d):
+            tmp = [self.seed[i]]
+            for j in range(1,self.b):
+                tmp.append(sha256(tmp[j-1]).digest())
+            self.seed[i] = tmp
     
     def MDP(self,x) -> list:
         d = ceil(log(x+1,self.b))
@@ -21,7 +28,8 @@ class HashWire:
             if ((x+1) % (bi)) != 0:
                 y = (x//bi)*bi - 1
                 res.append(y)
-        return list(set(res))[::-1]
+        # print(sorted(list(set(res))))
+        return sorted(list(set(res)))
     
     def divide(self,x):
         tmp = x
@@ -41,14 +49,15 @@ class HashWire:
     
     def shuffle(self,arr):
         n = len(arr)-1
+        random.seed(int(self.seed_m.hex(),16))
         for i in range(n-1,0,-1):
             j = randint(0,i+1)
             arr[i],arr[j] = arr[j],arr[i]
         return arr
     
-    def PLA(self,p,r):
+    def PLA(self,p,r,k):
         z = b''
-        if len(r) < self.d:
+        if ceil(log(k,self.b)) < self.d:
             z = p
         for i in range(len(r)):
             z = z+r[i]
@@ -56,36 +65,36 @@ class HashWire:
     
     def Comm(self,k):
         sigma = self.MDP(k)
-        self.seed = [self.KDF(self.seed_m+bytes(i)) for i in range(self.d)]
-        for i in range(self.d):
-            tmp = [self.seed[i]]
-            for j in range(1,self.b):
-                tmp.append(sha256(tmp[j-1]).digest())
-            self.seed[i] = tmp
 
         comm = []
         for x in sigma:
             K = self.divide(x)
+            if(len(K)<ceil(log(k,self.b))):
+                K = [0]*(ceil(log(k,self.b))-len(K))+K
             r = []
             for i in range(len(K)):
-                r.append(self.seed[i][K[i]])
+                r.append(self.seed[i-len(K)+self.d][K[i]])
             salt = self.KDF(self.seed_m+bytes(x))
-            comm.append(sha256(salt+self.PLA(self.p,r)).digest())
+            comm.append(sha256(salt+self.PLA(self.p,r,x)).digest())
+            # print(sha256(salt+self.PLA(self.p,r,x)).digest(),x)
         
         while len(comm)<self.d:
             comm.append(None)
         comm = self.shuffle(comm)
-        self.tree = SparseMerkleTree()
+        tree = SparseMerkleTree()
+        dict = {}
         for i in range(len(comm)):
             if comm[i] != None:
-                self.tree.update(bytes(i),comm[i])
-        return self.tree.root
+                tree.update(bytes(i),comm[i])
+                dict[comm[i]] = bytes(i)
+        return (tree,dict)
     
-    def Prove():
+    def Prove(self):
         pass
 
-    def Verify():
+    def Verify(self):
         pass
+
 
 tmp = HashWire()
-tmp.Comm(54)
+tree,dict = tmp.Comm(54)
