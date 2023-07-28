@@ -115,7 +115,7 @@ int main(){
     char hash[10086];
 
     int n = 1<<30;
-    for(int i = 0; i < 8; i++){
+    for(int i = 0; i < n; i++){
         b[i] = 'a';
     }
     b[n] = '\0';
