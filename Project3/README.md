@@ -1,13 +1,14 @@
 # Project3: implement length extension attack for SM3, SHA256, etc.
 
-本部分由刘舒畅，王子瑞负责。
+本部分由刘舒畅，王子瑞，李昕负责。
 
 ## 任务分工
 
 | 姓名   | 任务           |
 | ------ | -------------- |
-| 刘舒畅 | python版本编写 |
-| 王子瑞 | C++版本编写    |
+| 刘舒畅 | sm3 python版本编写 |
+| 王子瑞 | 3m3 C++版本编写    |
+| 李昕 | sha256 python版本编写    |
 
 ## 项目描述
 
