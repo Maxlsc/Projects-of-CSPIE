@@ -1,6 +1,8 @@
 # AES impl with ARM instruction
 
-此project利用ARM的SIMD指令集NEON实现AES加速
+此project由李昕负责
+
+利用ARM的SIMD指令集NEON实现AES加速
 
 ## SIMD指令概述
 
