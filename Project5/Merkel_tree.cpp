@@ -90,6 +90,14 @@ bool MT_proof(uint8_t* data_p){
     return 0;
 }
 
+bool MT_proof_p(uint8_t* data_p, uint32_t pls){
+    uint8_t hash[32];
+    MT_cal(root, pls, data_p, hash);
+    print(hash);
+    print(root->hash);
+    return check_byte(root->hash, hash, 32);
+}
+
 void MT_del(node* now){
     if(now->left == now->right){
         free(now);
@@ -119,5 +127,12 @@ int main(){
     uint64_t q = 0;
     if(MT_proof((uint8_t*)&q)) printf("%02x is in the MT.\n",q);
     else printf("%02x isn't in the MT.\n",q);
+
+    
+    if(MT_proof_p(data+4*8,5)) printf("%02x is in the MT.\n",*p);
+    else printf("%02x isn't in the MT.\n",*p);
+    
+    if(MT_proof_p(data+4*8,4)) printf("%02x is in the MT.\n",*p);
+    else printf("%02x isn't in the MT.\n",*p);
     MT_del(root);
 }
