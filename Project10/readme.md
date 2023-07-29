@@ -2,6 +2,8 @@
 
 此project由李昕负责，完成Report-on-the-application-of-this-deduce-technique-in-Ethereum-with-ECDSA
 
+在完成report的基础上，编写了代码，实现ECDSA由签名值推导出可能的公钥的python实现，具体实现及效果见project末尾
+
 ## ECDSA概述
 
 ECDSA 全称 Elliptic Curve Digital Signature Algorith，是基于 ECC 的数字签名算法，在以太坊等区块链网络中大量使用。每一笔区块链交易执行之前都必须进行权限校验，以确保该交易是由账户对应的私钥签发。
