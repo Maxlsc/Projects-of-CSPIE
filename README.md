@@ -44,3 +44,18 @@
 | [21 Schnorr Bacth](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project21) | 实现Schnorr签名的批量验证功能                                |                                  | **✔️**              |                    |
 | [22 research report on MPT](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project22) | 编写MPT（Merkle Patricia Trie）树报告，并分析部分MPT树代码   |                                  | **✔️**              |                    |
 | *[信安赛项目](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Email%20encryption%20system%20based%20on%20post%20quantum%20cryptography%20and%20key%20reuse) | 基于格密码和密钥复用实现的后量子邮件加密签名系统             |                                  |                    |                    |
+
+附：所需外部库一览表
+
+C++：openssl
+
+python
+
+| 库名称 | 下载方法                            |
+| ------ | ----------------------------------- |
+| Crypto | `pip install pycryptodome`          |
+| gmssl  | `pip install gmssl`                 |
+| pysmx  | `pip install snowland-smx==0.3.2a1` |
+| smt    | `pip install sparse-merkle-tree`    |
+| sympy  | `pip install sympy`                 |
+
