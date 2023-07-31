@@ -49,7 +49,7 @@
 
 附：所需外部库一览表
 
-C++：openssl
+C++：[openssl1.1.1](https://github.com/openssl/openssl/releases/tag/OpenSSL_1_1_1s)
 
 python
 
