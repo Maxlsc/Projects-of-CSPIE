@@ -1,4 +1,4 @@
-# Cyberspace Security Innovation and Entrepreneurship Practice Course
+# Cyberspace Security Practice of Innovation and Entrepreneurship Course
 
 山东大学网络空间安全学院（研究院） 2023年
 
@@ -16,37 +16,29 @@
 
 ## 项目完成进度及实现效果
 
-（注：各Project文件夹下有对应项目的详细报告，此处仅为效果汇总）
+（注：各Project文件夹下有对应项目的详细报告，此处仅为效果汇总，**✔️** 为全部由一人完成）
 
-**SM3：**
-
-Project1: implement the naïve birthday attack of reduced SM3
-
-| 实现方法 | 效果 | 配置 |
-| -------- | :--: | ---- |
-| python   |      |      |
-| c++      |      |      |
-
-Project2: implement the Rho method of reduced SM3
-
-| 实现方法 | 效果 | 配置 |
-| -------- | :--: | ---- |
-| python   |      |      |
-| c++      |      |      |
-
-Project3: implement length extension attack for SM3, SHA256, etc.
-
-Project4: do your best to optimize SM3 implementation(software)
-
-**SM4：**
-
-**BTC：**
-
-**SM2：**
-
-**ETC：**
-
-**zkSNARK：**
-
-## 小组分工
+| 项目名 | 效果                                             | 刘舒畅                           | 李昕 | 王子瑞 |
+| ------ | ------------------------------------------------ | -------------------------------- | ---- | ------ |
+| 1      | 碰撞结果48bit/17302ms                            | 自有库C++                        |      |        |
+| 2      | 碰撞结果48bit/11583ms                            | 自有库C++                        |      |        |
+| 3      | 实现对sha256与sm3的长度扩展攻击                  | python                           |      |        |
+| 4      | 1GB文件hash时间4092ms                            | 代码编写                         |      |        |
+| 5      | 在RFC6962标准下实现Merkle Tree的建立和存在性证明 | **✔️**                            |      |        |
+| 6      | python实现网络环境中的范围证明                   | **✔️**                            |      |        |
+| 7      | 实现Hash Wire证据生成，证明与验证全过程          | 论文分析，基本函数与证据生成编写 |      |        |
+| 8      |                                                  |                                  |      |        |
+| 9      |                                                  |                                  |      |        |
+| 10     |                                                  |                                  |      |        |
+| 11     | 在RFC6979标准下实现签名与加密                    | ✔️                                |      |        |
+| 12     | 实现文章中对于ECDSA与sm2的攻击                   | ECDSA部分                        |      |        |
+| 13     | 实现两种不同散列到椭圆曲线点群散列方法的ECMH     | ✔️                                |      |        |
+| 14     | 实现PGP，并加入签密功能                          | ✔️                                |      |        |
+| 15     | python实现网络环境中的sm2双签名                  | ✔️                                |      |        |
+| 16     | python实现网络环境中的sm2双解密                  | ✔️                                |      |        |
+| 17     |                                                  |                                  |      |        |
+| 18     | 获得tx，使用自编脚本分析tx内容与script内容       | ✔️                                |      |        |
+| 19     |                                                  |                                  |      |        |
+| 21     |                                                  |                                  |      |        |
+| 22     |                                                  |                                  |      |        |
 
