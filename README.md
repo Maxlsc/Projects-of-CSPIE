@@ -43,7 +43,7 @@
 | [19  forge a signature to pretend that you are Satoshi](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project19) |                                                              |                                  |                    |                    |
 | [21 Schnorr Bacth](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project21) | 实现Schnorr签名的批量验证功能                                |                                  | **✔️**              |                    |
 | [22 research report on MPT](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project22) | 编写MPT（Merkle Patricia Trie）树报告，并分析部分MPT树代码   |                                  | **✔️**              |                    |
-| *[信安赛项目](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Email%20encryption%20system%20based%20on%20post%20quantum%20cryptography%20and%20key%20reuse) | 基于格密码和密钥复用实现的后量子邮件加密签名系统             |                                  |                    |                    |
+| *[信安赛项目](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Email%20encryption%20system%20based%20on%20post%20quantum%20cryptography%20and%20key%20reuse) | 基于格密码和密钥复用实现的后量子邮件加密签名系统             | 本部分由三人共同完成。           | ✔️                  | ✔️                  |
 
 附：所需外部库一览表
 
