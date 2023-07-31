@@ -1,6 +1,15 @@
 # Project1: implement the naïve birthday attack of reduced SM3
 
-该项目由刘舒畅，王子瑞负责。刘舒畅负责python版本与C++自有库版本，王子瑞负责C++的openssl版本。
+该项目由刘舒畅，王子瑞，李昕分别实现。
+
+共完成四种实现。
+
+| 实现方法           | 负责人 |
+| ------------------ | ------ |
+| python             | 刘舒畅 |
+| 基于OpenSSL的c实现 | 王子瑞 |
+| 基于自建sm3的c实现 | 刘舒畅 |
+| 基于GMSSL的c实现   | 李昕   |
 
 ## 生日攻击原理
 
