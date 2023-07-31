@@ -20,8 +20,8 @@
 
 | 项目名 | 效果                                             | 刘舒畅                           | 李昕 | 王子瑞 |
 | ------ | ------------------------------------------------ | -------------------------------- | ---- | ------ |
-| 1      | 碰撞结果48bit/17302ms                            | python/自有库C++                        |      |        |
-| 2      | 碰撞结果48bit/11583ms                            | 自有库C++                        |   基于opwnsslC++   |        |
+| 1 implement the naïve birthday attack of reduced SM3 | 碰撞结果48bit/17302ms                            | python/自有库C++                        |      |        |
+| 2 implement the Rho method of reduced SM3 | 碰撞结果48bit/11583ms                            | python/自有库C++                 |   基于opwnsslC++   |        |
 | 3      | 实现对sha256与sm3的长度扩展攻击                  | SM3python                           |   SHA256python   |        |
 | 4      | 1GB文件hash时间4092ms                            | 代码编写                         |      |        |
 | 5      | 在RFC6962标准下实现Merkle Tree的建立和存在性证明 | **✔️**                            |      |        |
