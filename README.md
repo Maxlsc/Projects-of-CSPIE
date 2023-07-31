@@ -16,14 +16,16 @@
 
 ## 项目完成进度及实现效果
 
+本组完成全部21个project，同时完成信安赛作品，实现基于格密码和密钥复用的后量子邮件加密系统。
+
 （注：各Project文件夹下有对应项目的详细报告，此处仅为效果汇总，**✔️** 为全部由一人完成）
 
 | 项目名 | 效果                                             | 刘舒畅                           | 李昕 | 王子瑞 |
 | ------ | ------------------------------------------------ | -------------------------------- | ---- | ------ |
-| [1 implement the naïve birthday attack of reduced SM3](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project1) | 碰撞结果48bit/17302ms（AMD Ryzen 7 6800H with Radeon Graphics） | python/自有库C++                        |      |        |
-| [2 implement the Rho method of reduced SM3](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project2) | 碰撞结果48bit/11583ms（Intel(R) Core(TM) i7-12700H） | python/自有库C++                 |   基于opwnsslC++   |        |
-| [3 implement length extension attack for SM3, SHA256, etc](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project3) | 实现对sha256与sm3的长度扩展攻击                  | SM3python                           |   SHA256python   |        |
-| [4 do your best to optimize SM3 implementation(software)](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project4) | 1GB文件hash时间4092ms（AMD Ryzen 7 6800H with Radeon Graphics），接近openssl | 代码编写                         |      |        |
+| [1 implement the naïve birthday attack of reduced SM3](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project1) | 碰撞结果48bit/17302ms                            | python/自有库C++版本                |      |        |
+| [2 implement the Rho method of reduced SM3](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project2) | 碰撞结果48bit/11583ms                            | python/自有库C++版本               |   基于opwnsslC++版本   |        |
+| [3 implement length extension attack for SM3, SHA256, etc](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project3) | 实现对sha256与sm3的长度扩展攻击                  | SM3python版本                         |   SHA256python版本   |        |
+| [4 do your best to optimize SM3 implementation(software)](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project4) | 1GB文件hash时间4092ms                            | 代码编写                         |      |        |
 | [5 Impl Merkle Tree following RFC6962](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project5) | 在RFC6962标准下实现Merkle Tree的建立和存在性证明 | **✔️**                            |      |        |
 | [6 impl this protocol with actual network communication](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project6) | python实现网络环境中的范围证明                   | **✔️**                            |      |        |
 | [7 Try to Implement this scheme](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project7) | 实现Hash Wire证据生成，证明与验证全过程          | 论文分析，基本函数与证据生成编写 |      |        |
