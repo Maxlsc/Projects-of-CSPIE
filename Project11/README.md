@@ -4,7 +4,7 @@
 
 ## 参数选择
 
-本项目直接使用文档推荐的$\mathbb{F}_q$上的参数，如下所示：
+本项目直接使用文档推荐的 $\mathbb{F}_q$上的参数，如下所示：
 
 $p$=`FFFFFFFE FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF 00000000 FFFFFFFF FFFFFFFF `
 
