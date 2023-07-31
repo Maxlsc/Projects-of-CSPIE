@@ -23,7 +23,7 @@
 | 项目名 | 效果                                             | 刘舒畅                           | 李昕 | 王子瑞 |
 | ------ | ------------------------------------------------ | -------------------------------- | ---- | ------ |
 | [1 implement the naïve birthday attack of reduced SM3](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project1) | 碰撞结果48bit/17302ms                            | python/自有库C++版本                |      |        |
-| [2 implement the Rho method of reduced SM3](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project2) | 碰撞结果48bit/11583ms                            | python/自有库C++版本               |   基于opwnsslC++版本   |        |
+| [2 implement the Rho method of reduced SM3](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project2) | 碰撞结果48bit/11583ms                            | python/自有库C++版本               |   基于opensslC++版本   |        |
 | [3 implement length extension attack for SM3, SHA256, etc](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project3) | 实现对sha256与sm3的长度扩展攻击                  | SM3python版本                         |   SHA256python版本   |        |
 | [4 do your best to optimize SM3 implementation(software)](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project4) | 1GB文件hash时间4092ms                            | 代码编写                         |      |        |
 | [5 Impl Merkle Tree following RFC6962](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project5) | 在RFC6962标准下实现Merkle Tree的建立和存在性证明 | **✔️**                            |      |        |
