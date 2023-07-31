@@ -27,7 +27,7 @@
 | 5 Impl Merkle Tree following RFC6962 | 在RFC6962标准下实现Merkle Tree的建立和存在性证明 | **✔️**                            |      |        |
 | 6 impl this protocol with actual network communication | python实现网络环境中的范围证明                   | **✔️**                            |      |        |
 | 7 Try to Implement this scheme | 实现Hash Wire证据生成，证明与验证全过程          | 论文分析，基本函数与证据生成编写 |      |        |
-| 8 AES impl with ARM instruction | 利用ARM的SIMD指令集NEON实现AES128/192/256三个版本的加速；128bit版本在**PhytiumFT-2000/4**下计算1024bit数据100000000次耗时11s，相同配置下加速三倍 |         |   **✔️**    |        |
+| 8 AES impl with ARM instruction | 利用ARM的SIMD指令集NEON实现AES128/192/256三个版本加速 128bit版本在**PhytiumFT-2000/4**下计算1024bit数据100000000次耗时11s，相同配置下加速三倍 |         |   **✔️**    |        |
 | 9 AES / SM4 software implementation | 利用常见的查找表/利用SIMD AVX2指令/利用AES-NI指令集加速SM4  |           |    **✔️**   |        |
 | 10 report on the application of this deduce technique in Ethereum with ECDSA | 撰写关于ECDSA由签名值推导出公钥的原理方法/编写代码实现该过程       |                   |    **✔️**    |        |
 | 11 impl sm2 with RFC6979 | 在RFC6979标准下实现签名与加密                    | ✔️                                |      |        |
