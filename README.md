@@ -18,7 +18,7 @@
 
 ## 项目完成进度及实现效果
 
-本组完成全部21个project，同时完成信安赛作品，实现基于格密码和密钥复用的后量子邮件加密系统。
+本组完成全部21个project，同时完成信安赛作品，[实现基于格密码和密钥复用的后量子邮件加密系统](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Email%20encryption%20system%20based%20on%20post%20quantum%20cryptography%20and%20key%20reuse)。
 
 （注：各Project文件夹下有对应项目的详细报告，此处仅为效果汇总，**✔️** 为全部由一人完成）
 
