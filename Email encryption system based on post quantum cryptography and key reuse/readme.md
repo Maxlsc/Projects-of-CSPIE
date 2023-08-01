@@ -36,7 +36,7 @@
 
 ![image](./image/IBE1.png)
 
-经过综合比对后，本作品选择在效率更高的MNTRU上实现IBE作为底层设计。密钥生成算法$\KeyGen$中，基于Module-NTRU假设，以MNTRU实例作为主公钥，接近正交的短格基$\T_{MNTRU}$作为主私钥；用户密钥提取算法*Extract*中，在$\T_{MNTRU}$上使用随机化最近平面算法，运行近似高斯采样器得到用户私钥；加密算法$\mathsf{Encrypt}$和解密算法$\mathsf{Decrypt}$则基于Module-LWE假设实现。
+经过综合比对后，本作品选择在效率更高的MNTRU上实现IBE作为底层设计。密钥生成算法KeyGen中，基于Module-NTRU假设，以MNTRU实例作为主公钥，接近正交的短格基$`T_{MNTRU}`$作为主私钥；用户密钥提取算法Extract中，在$`T_{MNTRU}`$上使用随机化最近平面算法，运行近似高斯采样器得到用户私钥；加密算法Encrypt和解密算法Decrypt则基于Module-LWE假设实现。
 
 MNTRU格上的IBE可以在512维的多项上实现142bits安全，且相较于基于NTRU格87bits安全的构造相比，效率也有明显提升：密钥生成效率约提升1.7倍，加密和解密约提升3倍；与此同时，密钥规模也更小：主公钥规模由3328bits缩减为2432bits，用户私钥规模由2048bits缩减为1152bits。
 
