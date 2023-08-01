@@ -1,6 +1,6 @@
 # 基于格密码和密钥复用的后量子邮件加密系统
 
-本项目库为SDU2023创新创业实践课100组同学在课程期间，参加信安赛所完成的项目，本md文件仅介绍项目完成工作/创新点/编译方法部分，详细原理及证明见附件[基于格密码和密钥复用的后量子邮件加密系统](https://github.com/Maxlsc/Projects-of-CSPIE/blob/main/Email encryption system based on post quantum cryptography and key reuse/src/CISCNThesis__1_.pdf)
+本项目库为SDU2023创新创业实践课100组同学在课程期间，参加信安赛所完成的项目，本md文件仅介绍项目完成工作/创新点/编译方法部分，详细原理及证明见附件[基于格密码和密钥复用的后量子邮件加密系统](https://github.com/Maxlsc/Projects-of-CSPIE/blob/main/Email encryption system based on post quantum cryptography and key reuse/src/Report.pdf)
 
 ## 本作品的工作
 
