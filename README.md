@@ -49,9 +49,13 @@
 
 附：所需外部库一览表
 
-C++：[openssl1.1.1](https://github.com/openssl/openssl/releases/tag/OpenSSL_1_1_1s)
+- C++
 
-python
+  部分需要链接[OpenSSL](https://github.com/openssl/openssl/releases/tag/OpenSSL_1_1_1s)和[GMSSL](https://github.com/guanzhi/GmSSL)两个密码学库（在各project的readme中已标识）
+
+  链接方法：以VS2022为例，在项目属性页包含目录设置include文件夹，库目录设置静态键连接bin文件夹，附加依赖项设置libssl.lib和libcrypto.lib文件。
+
+- python：
 
 | 库名称 | 下载方法                            |
 | ------ | ----------------------------------- |
