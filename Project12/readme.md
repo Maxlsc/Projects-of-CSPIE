@@ -1,15 +1,17 @@
 # Project19: forge a signature to pretend that you are Satoshi
 
-本部分由刘舒畅，王子瑞负责。
+本部分由刘舒畅，王子瑞，李昕负责。
 
 ## 任务分工
 
-| 姓名   | 任务                           |
-| ------ | ------------------------------ |
+| 姓名   | 任务                                                         |
+| ------ | ------------------------------------------------------------ |
 | 王子瑞 | sm2的leak k,reuse k,two user reuse k,noncheck message伪造，报告撰写 |
-| 刘舒畅 | ECDSA的leak k,reuse k,two user reuse k,noncheck message，(r, s) and (r, -s) 与sm2和ECDSA密钥共用的伪造|
+| 刘舒畅 | ECDSA的leak k,reuse k,two user reuse k,noncheck message，(r, s) and (r, -s) 与sm2和ECDSA密钥共用的伪造 |
+| 李昕   | Schnorr的leak k,reuse k,two user reuse k,(r, s) and (r, -s) 与Schnorr和ECDSA密钥共用的伪造 |
 
 ## ECDSA
+
 ECDSA为DSA签名的椭圆曲线版本，比起DSA效率更高，安全性更强。我们首先编写了关于ECDSA的签名函数，这对于之后的伪造更有利。以下是关键部分代码：
 
 ```python
@@ -325,17 +327,26 @@ $d_1=(k-s_1)*(r_1+s_1)^{-1}(mod n)$
         print('fault')
 ```
 
+## Schnorr
+
+Schnorr与ECDSA各问题基本类似，不再赘述。
 
 ## 运行方式
+
 ECDSA:将ECDSA模块，sm2模块与pitfalls.py文件放入同一文件夹下，下载import中全部模块，之后可以进行运行。
 sm2:将sm2_模块与main.py文件放入同一文件夹下，下载import中全部模块，之后可以进行运行。
 
+Schnorr：将Schnorr.py和Schnorr_pitfalls.py放入同一文件夹，下载import中全部模块，之后可以进行运行。
+
 ## 最终结果
+
 我们对其进行验证，发现可以通过
 
 ![ECDSA](img/1.png)
 
 ![sm2](img/2.png)
+
+![Schnorr](./img/3.png)
 
 ## 参考资料
 

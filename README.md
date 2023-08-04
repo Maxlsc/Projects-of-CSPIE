@@ -13,7 +13,7 @@
 | 小组成员姓名 |                Github账户名称                | 学号         | 负责project(包括独立完成/合作完成) |
 | :----------: | :------------------------------------------: | ------------ | ---------------------------------- |
 |    刘舒畅    |     [Maxlsc ](https://github.com/Maxlsc)     | 202122460175 | 1,2,3,4,5,6,7,11,12,13,14,15,16,18 |
-|     李昕     | [xin-li-sdu ](https://github.com/xin-li-sdu) | 202100460065 | 1,2,3,8,9,10,17,21,22              |
+|     李昕     | [xin-li-sdu ](https://github.com/xin-li-sdu) | 202100460065 | 1,2,3,8,9,10,12,17,21,22           |
 |    王子瑞    |       [skqf ](https://github.com/skqf)       | 202100460088 | 1,3,4,5,7,12,19                    |
 
 ## 项目完成进度及实现效果
@@ -35,7 +35,7 @@
 | [9 AES / SM4 software implementation](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project9) | 利用查找表优化/利用SIMD AVX2指令集优化/利用AES-NI指令集优化三种方法加速SM4， **AMD Ryzen 7 6800H with Radeon Graphics**下加密1024bit信息分别耗时0.0129ms/0.0041ms/0.0069ms  |                                  | **✔️**              |                    |
 | [10 report on the application of this deduce technique in Ethereum with ECDSA](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project10) | 撰写关于ECDSA由签名值推导出公钥的原理方法/编写代码实现该过程 |                                  | **✔️**              |                    |
 | [11 impl sm2 with RFC6979](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project11) | 在RFC6979标准下实现签名与加密                                | ✔️                                |                    |                    |
-| [12 verify the above pitfalls with proof-of-concept code](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project12) | 实现文章中对于ECDSA与sm2的攻击                               | ECDSA部分                        |                    |           sm2部分         |
+| [12 verify the above pitfalls with proof-of-concept code](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project12) | 实现文章中对于ECDSA,Schnorr与SM2的攻击                     | ECDSA部分                        | Schnorr部分 |           sm2部分         |
 | [13 Implement the above ECMH scheme](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project13) | 实现两种不同散列到椭圆曲线点群散列方法的ECMH                 | ✔️                                |                    |                    |
 | [14 Implement a PGP scheme with SM2](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project14) | 实现PGP，并加入签密功能                                      | ✔️                                |                    |                    |
 | [15 implement sm2 2P sign with real network communication](https://github.com/Maxlsc/Projects-of-CSPIE/tree/main/Project15) | python实现网络环境中的sm2双签名                              | ✔️                                |                    |                    |
