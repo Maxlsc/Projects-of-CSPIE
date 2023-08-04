@@ -89,6 +89,14 @@ MNTRU格上的IBE可以在512维的多项上实现142bits安全，且相较于�
 
 本项目除实现高效的后端代码外，还针对windows系统编写了用户友好，功能强大，易于操作且稳定性好的软件前端界面。
 
+
+由于可执行文件过大，无法上传至github，故提供视频演示（审阅老师可下载本项目源码并验证功能）
+
+
+https://github.com/Maxlsc/Projects-of-CSPIE/assets/40687850/e95bd977-df4b-4074-adf8-b8cee52a79b9
+
+
+
 以下为使用截图：
 
 ![1](https://user-images.githubusercontent.com/40687850/233790089-72588769-8752-48e0-be95-1123e0ad4dce.png)
